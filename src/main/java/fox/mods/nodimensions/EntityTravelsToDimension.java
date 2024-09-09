@@ -1,6 +1,6 @@
 package fox.mods.nodimensions;
 
-import fox.mods.api.nodimensions.configuration.NoDimensionsFileConfiguration;
+import fox.mods.api.util.DimensionUtils;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.eventbus.api.Event;
@@ -11,11 +11,13 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.network.chat.Component;
+import org.apache.commons.lang3.tuple.Pair;
 
 import javax.annotation.Nullable;
+import java.util.List;
 
 
-@Mod.EventBusSubscriber
+@Mod.EventBusSubscriber(modid = NoDimensionsMod.MODID, bus = Mod.EventBusSubscriber.Bus.FORGE)
 public class EntityTravelsToDimension {
     @SubscribeEvent
     public static void onEntityTravelToDimension(EntityTravelToDimensionEvent event) {
@@ -29,25 +31,20 @@ public class EntityTravelsToDimension {
     private static void execute(@Nullable Event event, ResourceKey<Level> dimension, Entity entity) {
         if (dimension == null || entity == null)
             return;
-        if (dimension == Level.NETHER) {
-            if (NoDimensionsFileConfiguration.NETHER_ENABLED.get() == false) {
-                if (event != null && event.isCancelable()) {
-                    event.setCanceled(true);
-                } else if (event != null && event.hasResult()) {
-                    event.setResult(Event.Result.DENY);
-                }
+
+        Pair<String, String> dimensionInfo = DimensionUtils.getDimensionNamespaceAndPath(dimension);
+        String dimensionNamespace = dimensionInfo.getLeft();
+        String dimensionPath = dimensionInfo.getRight();
+
+        List<Pair<String, String>> enabledDimensions = DimensionUtils.getEnabledDimensions();
+        boolean isDisabled = enabledDimensions.stream()
+                .anyMatch(dim -> dim.getLeft().equals(dimensionNamespace) && dim.getRight().equals(dimensionPath));
+
+        if (isDisabled) {
+            if (event != null && event.isCancelable()) {
+                event.setCanceled(true);
                 if (entity instanceof Player _player && !_player.level().isClientSide())
-                    _player.displayClientMessage(Component.literal("§c§lYou cannot travel to the Nether..."), true);
-            }
-        } else if (dimension == Level.END) {
-            if (NoDimensionsFileConfiguration.END_ENABLED.get() == false) {
-                if (event != null && event.isCancelable()) {
-                    event.setCanceled(true);
-                } else if (event != null && event.hasResult()) {
-                    event.setResult(Event.Result.DENY);
-                }
-                if (entity instanceof Player _player && !_player.level().isClientSide())
-                    _player.displayClientMessage(Component.literal("§c§lYou cannot travel to the End..."), true);
+                    _player.displayClientMessage(Component.literal("§cYou cannot travel to this dimension..."), true);
             }
         }
     }
