@@ -25,7 +25,7 @@ public class EntityTravelsToDimension {
     }
 
     public static void execute(ResourceKey<Level> dimension, Entity entity) {
-        execute(null, dimension, entity);
+        execute(, dimension, entity);
     }
 
     private static void execute(@Nullable Event event, ResourceKey<Level> dimension, Entity entity) {
@@ -36,17 +36,20 @@ public class EntityTravelsToDimension {
         String dimensionNamespace = dimensionInfo.getLeft();
         String dimensionPath = dimensionInfo.getRight();
 
-        List<Pair<String, String>> enabledDimensions = DimensionUtils.getEnabledDimensions();
-        boolean isDisabled = enabledDimensions.stream()
+        List<Pair<String, String>> disabledDimensions = DimensionUtils.getDisabledDimensions();
+        boolean isDisabled = disabledDimensions.stream()
                 .anyMatch(dim -> dim.getLeft().equals(dimensionNamespace) && dim.getRight().equals(dimensionPath));
 
         if (isDisabled) {
             if (event != null && event.isCancelable()) {
                 event.setCanceled(true);
-                if (entity instanceof Player _player && !_player.level().isClientSide())
-                    _player.displayClientMessage(Component.literal("§cYou cannot travel to this dimension..."), true);
+            } else if (event != null && event.hasResult()) {
+                event.setResult(Event.Result.DENY);
             }
+            if (entity instanceof Player _player && !_player.level().isClientSide())
+                _player.displayClientMessage(Component.literal("§cYou cannot travel to this dimension..."), true);
         }
     }
 }
+
 
