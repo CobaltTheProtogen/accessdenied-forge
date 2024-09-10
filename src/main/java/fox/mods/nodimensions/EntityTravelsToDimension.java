@@ -6,10 +6,8 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.event.entity.EntityTravelToDimensionEvent;
 
-import net.minecraft.world.level.Level;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.resources.ResourceKey;
 import net.minecraft.network.chat.Component;
 import org.apache.commons.lang3.tuple.Pair;
 
@@ -21,14 +19,14 @@ import java.util.List;
 public class EntityTravelsToDimension {
     @SubscribeEvent
     public static void onEntityTravelToDimension(EntityTravelToDimensionEvent event) {
-        execute(event, event.getDimension(), event.getEntity());
+        execute(event, event.getDimension().location().toString(), event.getEntity());
     }
 
-    public static void execute(ResourceKey<Level> dimension, Entity entity) {
-        execute(, dimension, entity);
+    public static void execute(String dimension, Entity entity) {
+        execute(null, dimension, entity);
     }
 
-    private static void execute(@Nullable Event event, ResourceKey<Level> dimension, Entity entity) {
+    private static void execute(@Nullable Event event, String dimension, Entity entity) {
         if (dimension == null || entity == null)
             return;
 
@@ -36,8 +34,8 @@ public class EntityTravelsToDimension {
         String dimensionNamespace = dimensionInfo.getLeft();
         String dimensionPath = dimensionInfo.getRight();
 
-        List<Pair<String, String>> disabledDimensions = DimensionUtils.getDisabledDimensions();
-        boolean isDisabled = disabledDimensions.stream()
+        List<Pair<String, String>> allDimensions = DimensionUtils.getDisabledDimensions();
+        boolean isDisabled = allDimensions.stream()
                 .anyMatch(dim -> dim.getLeft().equals(dimensionNamespace) && dim.getRight().equals(dimensionPath));
 
         if (isDisabled) {
