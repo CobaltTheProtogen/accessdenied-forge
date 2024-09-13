@@ -1,6 +1,8 @@
-package fox.mods.nodimensions;
+package fox.mods.accessdenied;
 
-import fox.mods.api.util.DimensionUtils;
+import fox.mods.accessdenied.util.DimensionUtils;
+import fox.mods.accessdenied.util.PortalUtils;
+import net.minecraft.ChatFormatting;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.eventbus.api.Event;
@@ -15,7 +17,7 @@ import javax.annotation.Nullable;
 import java.util.List;
 
 
-@Mod.EventBusSubscriber(modid = NoDimensionsMod.MODID, bus = Mod.EventBusSubscriber.Bus.FORGE)
+@Mod.EventBusSubscriber(modid = AccessDenied.ID, bus = Mod.EventBusSubscriber.Bus.FORGE)
 public class EntityTravelsToDimension {
     @SubscribeEvent
     public static void onEntityTravelToDimension(EntityTravelToDimensionEvent event) {
@@ -34,18 +36,23 @@ public class EntityTravelsToDimension {
         String dimensionNamespace = dimensionInfo.getLeft();
         String dimensionPath = dimensionInfo.getRight();
 
-        List<Pair<String, String>> allDimensions = DimensionUtils.getDisabledDimensions();
-        boolean isDisabled = allDimensions.stream()
+        List<Pair<String, String>> enabledDimensions = DimensionUtils.getDisabledDimensions();
+        boolean isDisabled = enabledDimensions.stream()
                 .anyMatch(dim -> dim.getLeft().equals(dimensionNamespace) && dim.getRight().equals(dimensionPath));
 
         if (isDisabled) {
             if (event != null && event.isCancelable()) {
                 event.setCanceled(true);
-            } else if (event != null && event.hasResult()) {
-                event.setResult(Event.Result.DENY);
+                if (entity instanceof Player _player && !_player.level().isClientSide()) {
+                    String translationKey = "dimension." + dimensionNamespace + "." + dimensionPath;
+                    _player.displayClientMessage(Component.translatable("accessdenied.warning.text", Component.translatable(translationKey)).withStyle(ChatFormatting.RED), true);
+
+                    // Check if the player is standing in a portal block
+                    if (PortalUtils.isPlayerInPortal(_player)) {
+                        PortalUtils.teleportPlayerOutsidePortal(_player);
+                    }
+                }
             }
-            if (entity instanceof Player _player && !_player.level().isClientSide())
-                _player.displayClientMessage(Component.literal("§cYou cannot travel to this dimension..."), true);
         }
     }
 }
