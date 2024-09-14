@@ -4,7 +4,8 @@ import fox.mods.accessdenied.configuration.ADClientFileConfiguration;
 import fox.mods.accessdenied.util.DimensionUtils;
 import fox.mods.accessdenied.util.PortalUtils;
 import net.minecraft.ChatFormatting;
-import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.eventbus.api.Event;
@@ -23,14 +24,14 @@ import java.util.List;
 public class EntityTravelsToDimension {
     @SubscribeEvent
     public static void onEntityTravelToDimension(EntityTravelToDimensionEvent event) {
-        execute(event, event.getDimension().location().toString(), event.getEntity());
+        execute(event, event.getDimension(), event.getEntity());
     }
 
-    public static void execute(String dimension, Entity entity) {
+    public static void execute(ResourceKey<Level> dimension, Entity entity) {
         execute(null, dimension, entity);
     }
 
-    private static void execute(@Nullable Event event, String dimension, Entity entity) {
+    private static void execute(@Nullable Event event, ResourceKey<Level> dimension, Entity entity) {
         if (dimension == null || entity == null)
             return;
 
@@ -45,10 +46,10 @@ public class EntityTravelsToDimension {
         if (isDisabled) {
             if (event != null && event.isCancelable()) {
                 event.setCanceled(true);
-                if (entity instanceof Player _player && !_player.level.isClientSide()) {
+                if (entity instanceof Player _player && !_player.level().isClientSide()) {
                     String translationKey = "dimension." + dimensionNamespace + "." + dimensionPath;
                     if(ADClientFileConfiguration.SHOW_WARNING.get()) {
-                        _player.displayClientMessage(new TranslatableComponent("accessdenied.warning.text", new TranslatableComponent(translationKey)).withStyle(ChatFormatting.RED), true);
+                        _player.displayClientMessage(Component.translatable("accessdenied.warning.text", Component.translatable(translationKey)).withStyle(ChatFormatting.RED), true);
                     }
                     // Check if the player is standing in a portal block
                     if (PortalUtils.isPlayerInPortal(_player)) {

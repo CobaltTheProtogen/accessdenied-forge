@@ -12,7 +12,7 @@ public class ADFileConfiguration {
 
     static {
         BUILDER.push("General Settings");
-        DIMENSIONS_DISABLED = BUILDER.comment("Defines a list of dimensions that are disabled. If a dimension is not in this list, it will be enabled by default.").defineListAllowEmpty(List.of("dimensionsDisabled"), () -> Arrays.asList("minecraft:the_nether", "minecraft:the_end"), e -> e instanceof String && ((String) e).contains(":"));
+        DIMENSIONS_DISABLED = BUILDER.comment("Defines a list of dimensions that are disabled. If a dimension is not in this list, it will be enabled by default.").defineListAllowEmpty("dimensionsDisabled", Arrays.asList("minecraft:the_nether", "minecraft:the_end"), e -> e instanceof String && ((String) e).contains(":"));
         BUILDER.pop();
 
         SPEC = BUILDER.build();
