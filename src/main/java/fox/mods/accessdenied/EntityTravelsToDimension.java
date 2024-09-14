@@ -4,6 +4,7 @@ import fox.mods.accessdenied.configuration.ADClientFileConfiguration;
 import fox.mods.accessdenied.util.DimensionUtils;
 import fox.mods.accessdenied.util.PortalUtils;
 import net.minecraft.ChatFormatting;
+import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.eventbus.api.Event;
@@ -47,7 +48,7 @@ public class EntityTravelsToDimension {
                 if (entity instanceof Player _player && !_player.level.isClientSide()) {
                     String translationKey = "dimension." + dimensionNamespace + "." + dimensionPath;
                     if(ADClientFileConfiguration.SHOW_WARNING.get()) {
-                        _player.displayClientMessage(Component.translatable("accessdenied.warning.text", Component.translatable(translationKey)).withStyle(ChatFormatting.RED), true);
+                        _player.displayClientMessage(new TranslatableComponent("accessdenied.warning.text", new TranslatableComponent(translationKey)).withStyle(ChatFormatting.RED), true);
                     }
                     // Check if the player is standing in a portal block
                     if (PortalUtils.isPlayerInPortal(_player)) {

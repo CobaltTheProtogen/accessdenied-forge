@@ -4,7 +4,7 @@ import com.mojang.brigadier.CommandDispatcher;
 import fox.mods.accessdenied.AccessDenied;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
-import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.RegisterClientCommandsEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -19,7 +19,7 @@ public class ClientEvents {
                 .then(Commands.literal("version")
                         .requires(source -> source.hasPermission(2))
                         .executes(context -> {
-                            context.getSource().sendSystemMessage(Component.translatable("accessdenied.message.version.text", AccessDenied.NAME, AccessDenied.VERSION));
+                            context.getSource().sendSuccess(new TranslatableComponent("accessdenied.message.version.text", AccessDenied.NAME, AccessDenied.VERSION), false);
                             return 1;
                         })));
     }
