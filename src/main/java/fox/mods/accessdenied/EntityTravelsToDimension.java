@@ -44,7 +44,7 @@ public class EntityTravelsToDimension {
         if (isDisabled) {
             if (event != null && event.isCancelable()) {
                 event.setCanceled(true);
-                if (entity instanceof Player _player && !_player.level().isClientSide()) {
+                if (entity instanceof Player _player && !_player.level.isClientSide()) {
                     String translationKey = "dimension." + dimensionNamespace + "." + dimensionPath;
                     if(ADClientFileConfiguration.SHOW_WARNING.get()) {
                         _player.displayClientMessage(Component.translatable("accessdenied.warning.text", Component.translatable(translationKey)).withStyle(ChatFormatting.RED), true);

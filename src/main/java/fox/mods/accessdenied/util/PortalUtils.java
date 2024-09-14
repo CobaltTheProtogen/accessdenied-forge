@@ -10,7 +10,7 @@ import net.minecraft.world.phys.Vec3;
 public class PortalUtils {
     public static boolean isPlayerInPortal(Player player) {
         BlockPos playerPos = player.blockPosition();
-        Level level = player.level();
+        Level level = player.level;
 
         // Check a 3x3x3 area around the player for portal blocks
         for (int x = -1; x <= 1; x++) {
@@ -34,7 +34,7 @@ public class PortalUtils {
 
         // Ensure the teleport position is safe
         BlockPos teleportPos = new BlockPos((int) teleportVec.x, (int) teleportVec.y, (int) teleportVec.z);
-        Level level = player.level();
+        Level level = player.level;
         BlockState blockState = level.getBlockState(teleportPos);
 
         // Check if the teleport position is not obstructed
