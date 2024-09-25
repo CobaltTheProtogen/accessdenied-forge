@@ -1,20 +1,21 @@
-package fox.mods.accessdenied.client;
+package fox.mods.accessdenied.event.client;
 
 import com.mojang.brigadier.CommandDispatcher;
 import fox.mods.accessdenied.AccessDenied;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.network.chat.Component;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.client.event.RegisterClientCommandsEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.neoforge.client.event.RegisterClientCommandsEvent;
 
-@Mod.EventBusSubscriber(value = Dist.CLIENT, modid = AccessDenied.ID, bus = Mod.EventBusSubscriber.Bus.FORGE)
-public class ClientEvents {
+@EventBusSubscriber(value = Dist.CLIENT, modid = AccessDenied.ID, bus = EventBusSubscriber.Bus.GAME)
+public class ClientCommands {
     @SubscribeEvent
     public static void registerCommands(RegisterClientCommandsEvent event) {
         CommandDispatcher<CommandSourceStack> dispatcher = event.getDispatcher();
+
         dispatcher.register(Commands.literal(AccessDenied.ID)
                 .then(Commands.literal("version")
                         .requires(source -> source.hasPermission(2))
