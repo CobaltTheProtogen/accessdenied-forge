@@ -8,7 +8,7 @@ public class GetPlaced {
     public static int execute(Entity entity) {
         if (entity == null)
             return 0;
-        return entity.getData(AccessDeniedModVariables.PLAYER_VARIABLES).getBlocksPlaced();
+        return (entity.getCapability(AccessDeniedModVariables.PLAYER_VARIABLES_CAPABILITY, null).orElse(new AccessDeniedModVariables.PlayerVariables())).blocksPlaced;
     }
 }
 

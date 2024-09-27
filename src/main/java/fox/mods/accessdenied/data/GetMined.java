@@ -8,7 +8,7 @@ public class GetMined {
     public static int execute(Entity entity) {
         if (entity == null)
             return 0;
-        return entity.getData(AccessDeniedModVariables.PLAYER_VARIABLES).getBlocksMined();
+        return (entity.getCapability(AccessDeniedModVariables.PLAYER_VARIABLES_CAPABILITY, null).orElse(new AccessDeniedModVariables.PlayerVariables())).blocksMined;
     }
 }
 
