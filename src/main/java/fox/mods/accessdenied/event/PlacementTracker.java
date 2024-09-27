@@ -3,15 +3,15 @@ package fox.mods.accessdenied.event;
 import fox.mods.accessdenied.AccessDenied;
 import fox.mods.accessdenied.network.AccessDeniedModVariables;
 import net.minecraft.world.entity.Entity;
-import net.neoforged.bus.api.Event;
-import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.common.EventBusSubscriber;
-import net.neoforged.neoforge.event.level.BlockEvent;
+import net.minecraftforge.event.level.BlockEvent;
+import net.minecraftforge.eventbus.api.Event;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.common.Mod;
 
 import javax.annotation.Nullable;
 
 @SuppressWarnings({"unused","deprecation"})
-@EventBusSubscriber(modid = AccessDenied.ID, bus = EventBusSubscriber.Bus.GAME)
+@Mod.EventBusSubscriber
 public class PlacementTracker {
     @SubscribeEvent
     public static void onBlockPlace(BlockEvent.EntityPlaceEvent event) {
@@ -28,15 +28,11 @@ public class PlacementTracker {
         if (entity == null)
             return;
         {
-            AccessDeniedModVariables.PlayerVariables _vars = entity.getData(AccessDeniedModVariables.PLAYER_VARIABLES);
-            AccessDeniedModVariables.PlayerVariables updatedVars = new AccessDeniedModVariables.PlayerVariables(
-                    _vars.getKills(),
-                    _vars.getBlocksMined(),
-                    _vars.getBlocksPlaced() + 1,
-                    _vars.getBountyProgress()
-            );
-            entity.setData(AccessDeniedModVariables.PLAYER_VARIABLES, updatedVars);
-            _vars.syncPlayerVariables(entity);
+            int _setval = (entity.getCapability(AccessDeniedModVariables.PLAYER_VARIABLES_CAPABILITY, null).orElse(new AccessDeniedModVariables.PlayerVariables())).blocksPlaced + 1;
+            entity.getCapability(AccessDeniedModVariables.PLAYER_VARIABLES_CAPABILITY, null).ifPresent(capability -> {
+                capability.kills = _setval;
+                capability.syncPlayerVariables(entity);
+            });
         }
     }
 }

@@ -74,8 +74,8 @@ public class EntityTravelTracker {
 
         // Check if the dimension is disabled
         if (dimensionData != null && dimensionData.disabled().orElse(false)) {
-            if (event instanceof ICancellableEvent _cancellable) {
-                _cancellable.setCanceled(true);
+            if (event != null && event.isCancelable()) {
+                event.setCanceled(true);
                 teleportationSuccessful = false;
                 if (entity instanceof Player player && !player.level().isClientSide()) {
                     if(dimension == Level.END) {
@@ -102,8 +102,8 @@ public class EntityTravelTracker {
 
         if (entity instanceof Player player) {
             if (!accessManager.canEnterDimension(player, dimension)) {
-                if (event instanceof ICancellableEvent _cancellable) {
-                    _cancellable.setCanceled(true);
+                if (event != null && event.isCancelable()) {
+                    event.setCanceled(true);
                     teleportationSuccessful = false;
                     if (!player.level().isClientSide()) {
                         if(dimension == Level.END) {
