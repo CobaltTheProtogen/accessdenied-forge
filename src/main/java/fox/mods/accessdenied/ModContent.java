@@ -1,7 +1,7 @@
 package fox.mods.accessdenied;
 
 import net.minecraft.world.item.Item;
-import net.neoforged.bus.api.IEventBus;
+import net.minecraftforge.eventbus.api.IEventBus;
 import net.neoforged.neoforge.registries.DeferredItem;
 import net.neoforged.neoforge.registries.DeferredRegister;
 
